@@ -9,7 +9,7 @@ import { PrismaService } from "src/database/prisma.service";
 import { Role, Prisma } from "@prisma/client";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { UserResponseDto } from "./dto/response-user.dto";
+import { ResponseUserDto } from "./dto/response-user.dto";
 
 import * as bcrypt from "bcrypt";
 
@@ -17,7 +17,18 @@ import * as bcrypt from "bcrypt";
 export class UserService {
 	constructor(private prisma: PrismaService) {}
 
-	async findById(id: string): Promise<UserResponseDto> {
+	// Find all active users
+	async findAll(): Promise<ResponseUserDto[]> {
+		const userEntities = await this.prisma.user.findMany({
+			where: {
+				isActive: true,
+			},
+		});
+		return userEntities.map((userEntity) => new ResponseUserDto(userEntity));
+	}
+
+	// Find one user by ID
+	async findById(id: string): Promise<ResponseUserDto> {
 		const userEntity = await this.prisma.user.findUnique({
 			where: { id },
 		});
@@ -25,19 +36,11 @@ export class UserService {
 		if (!userEntity) {
 			throw new NotFoundException(`User with ID "${id}" not found`);
 		}
-		return new UserResponseDto(userEntity);
+		return new ResponseUserDto(userEntity);
 	}
 
-	async findAll(): Promise<UserResponseDto[]> {
-		const userEntities = await this.prisma.user.findMany({
-			where: {
-				isActive: true,
-			},
-		});
-		return userEntities.map((userEntity) => new UserResponseDto(userEntity));
-	}
-
-	async create(data: CreateUserDto): Promise<UserResponseDto> {
+	// Create a new user
+	async create(data: CreateUserDto): Promise<ResponseUserDto> {
 		const { role: roleString, password: plainPassword, ...userData } = data;
 
 		const hashedPassword = await bcrypt.hash(plainPassword, 10);
@@ -59,7 +62,7 @@ export class UserService {
 			const createdUser = await this.prisma.user.create({
 				data: prismaCreateData,
 			});
-			return new UserResponseDto(createdUser);
+			return new ResponseUserDto(createdUser);
 		} catch (error) {
 			if (
 				error instanceof PrismaClientKnownRequestError &&
@@ -74,8 +77,8 @@ export class UserService {
 		}
 	}
 
-	//TODO: Modularizar esse update
-	async update(userId: string, data: UpdateUserDto): Promise<UserResponseDto> {
+	// Update an existing user
+	async update(userId: string, data: UpdateUserDto): Promise<ResponseUserDto> {
 		const existingUser = await this.prisma.user.findUnique({
 			where: { id: userId },
 		});
@@ -147,7 +150,7 @@ export class UserService {
 		}
 
 		if (Object.keys(prismaUpdateData).length === 0) {
-			return new UserResponseDto(existingUser);
+			return new ResponseUserDto(existingUser);
 		}
 
 		try {
@@ -155,7 +158,7 @@ export class UserService {
 				where: { id: userId },
 				data: prismaUpdateData,
 			});
-			return new UserResponseDto(updatedUserEntity);
+			return new ResponseUserDto(updatedUserEntity);
 		} catch (error) {
 			if (
 				error instanceof PrismaClientKnownRequestError &&
