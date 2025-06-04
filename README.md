@@ -114,11 +114,11 @@ http://localhost:3000/api
 ### Tarefas (Protegidas por JWT)
 
 - `GET /tasks` - Listar todas as tarefas do usuário logado
+  - É possivel filtrar as tasks por um parametro de query chamado status que aceita - PENDING | COMPLETED
 - `POST /tasks` - Criar uma nova tarefa
 - `GET /tasks/{id}` - Buscar uma tarefa específica
 - `PATCH /tasks/{id}` - Atualizar uma tarefa
 - `DELETE /tasks/{id}` - Excluir uma tarefa
-- `GET /tasks/{status}` - Filtrar tarefas por status
 
 ## Estrutura do Projeto
 
