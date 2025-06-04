@@ -100,7 +100,6 @@ export class UserService {
 			role: roleString,
 			name,
 			email,
-			isActive,
 		} = data;
 
 		const prismaUpdateData: Prisma.UserUpdateInput = {};
@@ -115,10 +114,7 @@ export class UserService {
 			}
 		} else if (
 			currentPassword &&
-			(name !== undefined ||
-				email !== undefined ||
-				isActive !== undefined ||
-				roleString !== undefined)
+			(name !== undefined || email !== undefined || roleString !== undefined)
 		) {
 			requireCurrentPasswordCheck = true;
 		}
@@ -140,7 +136,6 @@ export class UserService {
 
 		if (name !== undefined) prismaUpdateData.name = name;
 		if (email !== undefined) prismaUpdateData.email = email;
-		if (isActive !== undefined) prismaUpdateData.isActive = isActive;
 
 		if (newPassword) {
 			prismaUpdateData.password = await bcrypt.hash(newPassword, 10);
