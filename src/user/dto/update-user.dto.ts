@@ -9,7 +9,7 @@ import {
 export class UpdateUserDto {
 	@IsOptional()
 	@IsString()
-	name: string;
+	name?: string;
 
 	@IsOptional()
 	@IsString({ message: "Current password must be a string" })
@@ -21,7 +21,7 @@ export class UpdateUserDto {
 
 	@IsOptional()
 	@IsEmail({}, { message: "Email must be a valid email address" })
-	email: string;
+	email?: string;
 
 	@IsOptional()
 	@IsIn(["USER", "ADMIN"], { message: "Role must be either USER or ADMIN" })
