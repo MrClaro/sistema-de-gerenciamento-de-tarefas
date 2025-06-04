@@ -20,6 +20,21 @@ export class TaskService {
 		return tasks.map((task) => new ResponseTaskDto(task));
 	}
 
+	// Retrieves tasks by their status
+	async findByStatus(
+		status: TaskStatusEnum,
+		userId: string,
+	): Promise<ResponseTaskDto[]> {
+		const tasks = await this.prisma.task.findMany({
+			where: {
+				status: status,
+				isActive: true,
+				userId: userId,
+			},
+		});
+		return tasks.map((task) => new ResponseTaskDto(task));
+	}
+
 	// Retrieves one task by its ID
 	async findById(id: string, userId: string): Promise<ResponseTaskDto> {
 		const taskEntity = await this.prisma.task.findUnique({
@@ -37,21 +52,6 @@ export class TaskService {
 		}
 
 		return new ResponseTaskDto(taskEntity);
-	}
-
-	// Retrieves tasks by their status
-	async findByStatus(
-		status: TaskStatusEnum,
-		userId: string,
-	): Promise<ResponseTaskDto[]> {
-		const tasks = await this.prisma.task.findMany({
-			where: {
-				status: status,
-				isActive: true,
-				userId: userId,
-			},
-		});
-		return tasks.map((task) => new ResponseTaskDto(task));
 	}
 
 	// Creates a new task
