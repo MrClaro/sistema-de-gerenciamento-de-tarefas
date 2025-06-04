@@ -78,6 +78,9 @@ pnpm prisma migrate dev
 # Desenvolvimento
 pnpm start:dev
 
+# Executando testes unitários
+pnpm test
+
 # Produção
 pnpm build
 pnpm start:prod
