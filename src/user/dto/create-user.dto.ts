@@ -1,5 +1,4 @@
 import {
-	IsBoolean,
 	IsEmail,
 	IsIn,
 	IsNotEmpty,
@@ -16,15 +15,11 @@ export class CreateUserDto {
 	@MinLength(8, { message: "Password must be at least 8 characters long" })
 	password: string;
 
-	@IsEmail({}, { message: "Email must be a valid email address" })
 	@IsNotEmpty({ message: "Email is required" })
+	@IsEmail({}, { message: "Email must be a valid email address" })
 	email: string;
 
 	@IsOptional()
 	@IsIn(["USER", "ADMIN"], { message: "Role must be either USER or ADMIN" })
 	role?: string;
-
-	@IsOptional()
-	@IsBoolean({ message: "isActive must be a boolean value" })
-	isActive?: boolean;
 }
