@@ -3,10 +3,12 @@ import {
 	Controller,
 	Delete,
 	Get,
+	Optional,
 	Param,
 	ParseEnumPipe,
 	Patch,
 	Post,
+	Query,
 	UseGuards,
 } from "@nestjs/common";
 import { TaskService } from "./task.service";
@@ -26,8 +28,17 @@ export class TaskController {
 	@ApiBearerAuth("JWT-auth")
 	@Get()
 	@UseGuards(JwtAuthGuard)
-	async findAll(@CurrentUser() user: CurrentUserDto) {
-		return await this.taskService.findAll(user.userId);
+	async getTasks(
+		@CurrentUser() user: CurrentUserDto,
+		@Optional()
+		@Query("status", new ParseEnumPipe(TaskStatusEnum, { optional: true }))
+		status?: TaskStatusEnum,
+	) {
+		if (status) {
+			return await this.taskService.findByStatus(status, user.userId);
+		} else {
+			return await this.taskService.findAll(user.userId);
+		}
 	}
 
 	@ApiBearerAuth("JWT-auth")
@@ -38,16 +49,6 @@ export class TaskController {
 		@CurrentUser() user: CurrentUserDto,
 	) {
 		return await this.taskService.findById(taskId, user.userId);
-	}
-
-	@ApiBearerAuth("JWT-auth")
-	@Get(":status")
-	@UseGuards(JwtAuthGuard)
-	async findByStatus(
-		@Param("status", new ParseEnumPipe(TaskStatusEnum)) status: TaskStatusEnum,
-		@CurrentUser() user: CurrentUserDto,
-	) {
-		return await this.taskService.findByStatus(status, user.userId);
 	}
 
 	@ApiBearerAuth("JWT-auth")
