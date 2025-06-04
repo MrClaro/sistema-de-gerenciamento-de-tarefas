@@ -4,6 +4,7 @@ import {
 	Delete,
 	Get,
 	Param,
+	ParseEnumPipe,
 	Patch,
 	Post,
 	UseGuards,
@@ -13,6 +14,7 @@ import { CreateTaskDto } from "./dto/create-task.dto";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { CurrentUser } from "src/auth/decorator/current-user.decorator";
 import { CurrentUserDto } from "src/auth/dto/current-user.dto";
+import { TaskStatusEnum } from "./enum/task-status.enum";
 
 @Controller("task")
 export class TaskController {
@@ -31,6 +33,15 @@ export class TaskController {
 		@CurrentUser() user: CurrentUserDto,
 	) {
 		return await this.taskService.findById(taskId, user.userId);
+	}
+
+	@Get(":status")
+	@UseGuards(JwtAuthGuard)
+	async findByStatus(
+		@Param("status", new ParseEnumPipe(TaskStatusEnum)) status: TaskStatusEnum,
+		@CurrentUser() user: CurrentUserDto,
+	) {
+		return await this.taskService.findByStatus(status, user.userId);
 	}
 
 	@Post()
