@@ -1,11 +1,12 @@
 import {
 	IsBoolean,
 	IsEmail,
-	IsIn,
+	IsEnum,
 	IsOptional,
 	IsString,
 	MinLength,
 } from "class-validator";
+import { Role } from "../enum/user-role.enum";
 export class UpdateUserDto {
 	@IsOptional()
 	@IsString()
@@ -24,8 +25,8 @@ export class UpdateUserDto {
 	email?: string;
 
 	@IsOptional()
-	@IsIn(["USER", "ADMIN"], { message: "Role must be either USER or ADMIN" })
-	role?: string;
+	@IsEnum(["ADMIN", "USER"], { message: "Role must be either ADMIN or USER" })
+	role?: Role;
 
 	@IsOptional()
 	@IsBoolean({ message: "isActive must be a boolean value" })
