@@ -6,6 +6,9 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
 import * as bcrypt from "bcrypt";
+import { ResponseUserDto } from "src/user/dto/response-user.dto";
+import { CreateUserForAuthDto } from "./dto/create-user-for-auth.dto";
+import { Role } from "src/user/enum/user-role.enum";
 
 @Injectable()
 export class AuthService {
@@ -15,10 +18,13 @@ export class AuthService {
 	) {}
 
 	async signIn(email: string, pass: string): Promise<{ access_token: string }> {
-		const user = await this.userService.findByEmail(email);
-		if (!user) {
-			throw new UnauthorizedException("Invalid credentials");
+		const user: ResponseUserDto | null =
+			await this.userService.findByEmail(email);
+
+		if (!user || !user.isActive) {
+			throw new UnauthorizedException("Invalid credentials or user inactive");
 		}
+
 		if (typeof user.password !== "string" || user.password.length === 0) {
 			console.error(
 				`User with email ${email} does not have a valid password set.`,
@@ -31,17 +37,21 @@ export class AuthService {
 		if (!isPasswordMatching) {
 			throw new UnauthorizedException("Invalid credentials");
 		}
-		const payload = { sub: user.id, username: user.name };
+
+		const payload = {
+			sub: user.id,
+			name: user.name,
+			roles: user.role ? [user.role.toString()] : [Role.USER.toString()],
+		};
 		return {
 			access_token: await this.jwtService.signAsync(payload),
 		};
 	}
 
-	async register(registerDto: {
-		email: string;
-		name: string;
-		password: string;
-	}): Promise<{ access_token?: string; user: any }> {
+	async register(registerDto: CreateUserForAuthDto): Promise<{
+		access_token?: string;
+		user: Omit<ResponseUserDto, "password">;
+	}> {
 		const existingUser = await this.userService.findByEmail(registerDto.email);
 		if (existingUser) {
 			throw new ConflictException("Email already registered");
@@ -51,12 +61,16 @@ export class AuthService {
 			email: registerDto.email,
 			name: registerDto.name,
 			password: registerDto.password,
+			role: registerDto.role || Role.USER,
 		});
 
-		const payload = { sub: newUser.id, username: newUser.name };
+		const payload = {
+			sub: newUser.id,
+			name: newUser.name,
+			roles: newUser.role ? [newUser.role.toString()] : [Role.USER.toString()],
+		};
 		const accessToken = await this.jwtService.signAsync(payload);
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { password: _unusedPassword, ...userResult } = newUser;
 
 		return {
