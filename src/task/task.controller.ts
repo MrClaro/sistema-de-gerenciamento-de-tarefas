@@ -1,6 +1,7 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
 	Param,
 	Patch,
@@ -53,5 +54,14 @@ export class TaskController {
 			updateTaskDto,
 			user.userId,
 		);
+	}
+
+	@Delete(":id")
+	@UseGuards(JwtAuthGuard)
+	async softDelete(
+		@Param("id") taskId: string,
+		@CurrentUser() user: CurrentUserDto,
+	) {
+		return await this.taskService.softDeleteTask(taskId, user.userId);
 	}
 }
