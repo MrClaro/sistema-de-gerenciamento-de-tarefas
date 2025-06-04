@@ -179,4 +179,30 @@ export class UserService {
 			throw error;
 		}
 	}
+
+	// Soft delete a user
+	async softDeleteUser(userIdToDelete: string): Promise<ResponseUserDto> {
+		const user = await this.prisma.user.findUnique({
+			where: { id: userIdToDelete },
+		});
+
+		if (!user) {
+			throw new NotFoundException(
+				`User with ID "${userIdToDelete}" not found.`,
+			);
+		}
+
+		if (!user.isActive) {
+			throw new BadRequestException(
+				`User with ID "${userIdToDelete}" is already inactive.`,
+			);
+		}
+
+		const updatedUser = await this.prisma.user.update({
+			where: { id: userIdToDelete },
+			data: { isActive: false },
+		});
+
+		return new ResponseUserDto(updatedUser);
+	}
 }
