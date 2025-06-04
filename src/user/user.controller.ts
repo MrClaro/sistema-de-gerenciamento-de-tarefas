@@ -17,6 +17,11 @@ export class UserController {
 		return await this.userService.findById(userId);
 	}
 
+	@Get()
+	async findByEmail(@Body("email") email: string) {
+		return await this.userService.findByEmail(email);
+	}
+
 	@Post()
 	async create(@Body() data: CreateUserDto) {
 		return await this.userService.create(data);
