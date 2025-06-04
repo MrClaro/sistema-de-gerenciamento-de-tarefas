@@ -1,31 +1,57 @@
-import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
+import {
+	Body,
+	Controller,
+	Get,
+	Param,
+	Patch,
+	Post,
+	UseGuards,
+} from "@nestjs/common";
 import { TaskService } from "./task.service";
 import { CreateTaskDto } from "./dto/create-task.dto";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
+import { CurrentUser } from "src/auth/decorator/current-user.decorator";
+import { CurrentUserDto } from "src/auth/dto/current-user.dto";
 
 @Controller("task")
 export class TaskController {
 	constructor(private readonly taskService: TaskService) {}
 
 	@Get()
-	async findAll() {
-		return await this.taskService.findAll();
+	@UseGuards(JwtAuthGuard)
+	async findAll(@CurrentUser() user: CurrentUserDto) {
+		return await this.taskService.findAll(user.userId);
 	}
 
 	@Get(":id")
-	async findById(@Param("id") taskId: string) {
-		return await this.taskService.findById(taskId);
+	@UseGuards(JwtAuthGuard)
+	async findById(
+		@Param("id") taskId: string,
+		@CurrentUser() user: CurrentUserDto,
+	) {
+		return await this.taskService.findById(taskId, user.userId);
 	}
 
 	@Post()
-	async createTask(@Body() createTaskDto: CreateTaskDto) {
-		return await this.taskService.createTask(createTaskDto);
+	@UseGuards(JwtAuthGuard)
+	async createTask(
+		@Body() createTaskDto: CreateTaskDto,
+		@CurrentUser() user: CurrentUserDto,
+	) {
+		return await this.taskService.createTask(createTaskDto, user.userId);
 	}
 
 	@Patch(":id")
+	@UseGuards(JwtAuthGuard)
 	async updateTask(
 		@Param("id") taskId: string,
 		@Body() updateTaskDto: CreateTaskDto,
+		@CurrentUser() user: CurrentUserDto,
 	) {
-		return await this.taskService.updateTask(taskId, updateTaskDto);
+		return await this.taskService.updateTask(
+			taskId,
+			updateTaskDto,
+			user.userId,
+		);
 	}
 }
