@@ -81,4 +81,37 @@ export class TaskService {
 		});
 		return new ResponseTaskDto(updatedTask);
 	}
+
+	// Soft deletes a task by setting isActive to false
+	async softDeleteTask(
+		taskId: string,
+		userId: string,
+	): Promise<ResponseTaskDto> {
+		const taskEntity = await this.prisma.task.findUnique({
+			where: { id: taskId },
+		});
+
+		if (!taskEntity) {
+			throw new NotFoundException(`Task with ID "${taskId}" not found`);
+		}
+
+		if (taskEntity.userId !== userId) {
+			throw new NotFoundException(
+				`Task with ID "${taskId}" not found for this user.`,
+			);
+		}
+
+		if (!taskEntity.isActive) {
+			throw new NotFoundException(
+				`Task with ID "${taskId}" is already deleted.`,
+			);
+		}
+
+		const deletedTask = await this.prisma.task.update({
+			where: { id: taskId },
+			data: { isActive: false },
+		});
+
+		return new ResponseTaskDto(deletedTask);
+	}
 }
