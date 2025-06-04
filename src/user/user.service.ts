@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { PrismaService } from "src/database/prisma.service";
-import { Role, Prisma } from "@prisma/client";
+import { Role, Prisma, User } from "@prisma/client";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { ResponseUserDto } from "./dto/response-user.dto";
@@ -37,6 +37,13 @@ export class UserService {
 			throw new NotFoundException(`User with ID "${id}" not found`);
 		}
 		return new ResponseUserDto(userEntity);
+	}
+
+	async findByEmail(email: string): Promise<User | null> {
+		const userEntity = await this.prisma.user.findUnique({
+			where: { email },
+		});
+		return userEntity;
 	}
 
 	// Create a new user
