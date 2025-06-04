@@ -12,8 +12,4 @@ export class CreateTaskDto {
 	@IsOptional()
 	@IsDate({ message: "Due date must be a valid date" })
 	dueDate?: Date;
-
-	@IsNotEmpty({ message: "User ID is required" })
-	@IsString({ message: "User ID must be a string" })
-	userId: string;
 }
