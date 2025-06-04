@@ -5,7 +5,6 @@ export class ResponseUserDto {
 	name: string;
 	email: string;
 	role: Role;
-	password?: string;
 	isActive: boolean;
 	createdAt: Date;
 	updatedAt: Date;
@@ -15,7 +14,6 @@ export class ResponseUserDto {
 		this.name = userFromPrisma.name;
 		this.email = userFromPrisma.email;
 		this.role = userFromPrisma.role;
-		this.password = userFromPrisma.password ?? undefined;
 		this.isActive = userFromPrisma.isActive;
 		this.createdAt = userFromPrisma.createdAt;
 		this.updatedAt = userFromPrisma.updatedAt;

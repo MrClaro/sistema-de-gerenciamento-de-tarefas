@@ -6,9 +6,9 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
 import * as bcrypt from "bcrypt";
-import { ResponseUserDto } from "src/user/dto/response-user.dto";
 import { CreateUserForAuthDto } from "./dto/create-user-for-auth.dto";
 import { Role } from "src/user/enum/user-role.enum";
+import { User } from "@prisma/client";
 
 @Injectable()
 export class AuthService {
@@ -18,8 +18,7 @@ export class AuthService {
 	) {}
 
 	async signIn(email: string, pass: string): Promise<{ access_token: string }> {
-		const user: ResponseUserDto | null =
-			await this.userService.findByEmail(email);
+		const user: User | null = await this.userService.findByEmail(email);
 
 		if (!user || !user.isActive) {
 			throw new UnauthorizedException("Invalid credentials or user inactive");
@@ -50,7 +49,7 @@ export class AuthService {
 
 	async register(registerDto: CreateUserForAuthDto): Promise<{
 		access_token?: string;
-		user: Omit<ResponseUserDto, "password">;
+		user: Omit<User, "password">;
 	}> {
 		const existingUser = await this.userService.findByEmail(registerDto.email);
 		if (existingUser) {
@@ -71,11 +70,9 @@ export class AuthService {
 		};
 		const accessToken = await this.jwtService.signAsync(payload);
 
-		const { password: _unusedPassword, ...userResult } = newUser;
-
 		return {
 			access_token: accessToken,
-			user: userResult,
+			user: newUser,
 		};
 	}
 }
