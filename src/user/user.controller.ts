@@ -1,6 +1,7 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
 	Param,
 	Patch,
@@ -11,6 +12,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UserService } from "./user.service";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
+import { Roles } from "src/auth/decorator/roles.decorator";
 
 @Controller("user")
 export class UserController {
@@ -37,5 +39,12 @@ export class UserController {
 	@UseGuards(JwtAuthGuard)
 	async update(@Param("id") userId: string, @Body() data: UpdateUserDto) {
 		return await this.userService.update(userId, data);
+	}
+
+	@Delete(":id")
+	@Roles("ADMIN")
+	@UseGuards(JwtAuthGuard)
+	async softDelete(@Param("id") userId: string) {
+		return await this.userService.softDeleteUser(userId);
 	}
 }
