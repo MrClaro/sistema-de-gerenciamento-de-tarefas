@@ -3,6 +3,7 @@ import { PrismaService } from "src/database/prisma.service";
 import { ResponseTaskDto } from "./dto/response-task.dto";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
+import { TaskStatusEnum } from "./enum/task-status.enum";
 
 @Injectable()
 export class TaskService {
@@ -36,6 +37,21 @@ export class TaskService {
 		}
 
 		return new ResponseTaskDto(taskEntity);
+	}
+
+	// Retrieves tasks by their status
+	async findByStatus(
+		status: TaskStatusEnum,
+		userId: string,
+	): Promise<ResponseTaskDto[]> {
+		const tasks = await this.prisma.task.findMany({
+			where: {
+				status: status,
+				isActive: true,
+				userId: userId,
+			},
+		});
+		return tasks.map((task) => new ResponseTaskDto(task));
 	}
 
 	// Creates a new task
