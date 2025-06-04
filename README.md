@@ -98,14 +98,22 @@ http://localhost:3000/api
 - `POST /auth/register` - Registrar um novo usuário
 - `POST /auth/login` - Login e obtenção do token JWT
 
+### Usuários (Protegidos por JWT)
+
+- `GET /users` - Listar todos os usuários
+- `POST /users` - Criar um novo usuário
+- `GET /users/{id}` - Buscar um usuário específico
+- `PATCH /users/{id}` - Atualizar um usuário
+- `DELETE /users/{id}` - Excluir um usuário
+
 ### Tarefas (Protegidas por JWT)
 
 - `GET /tasks` - Listar todas as tarefas do usuário logado
-- `GET /tasks?status=completed` - Filtrar tarefas por status
 - `POST /tasks` - Criar uma nova tarefa
-- `GET /tasks/:id` - Buscar uma tarefa específica
-- `PUT /tasks/:id` - Atualizar uma tarefa
-- `DELETE /tasks/:id` - Excluir uma tarefa
+- `GET /tasks/{id}` - Buscar uma tarefa específica
+- `PATCH /tasks/{id}` - Atualizar uma tarefa
+- `DELETE /tasks/{id}` - Excluir uma tarefa
+- `GET /tasks/{status}` - Filtrar tarefas por status
 
 ## Estrutura do Projeto
 
@@ -120,24 +128,38 @@ src/
 
 ## Modelos de Dados
 
-### Usuário
-- `id`: string (PK)
+### Usuário (User)
+- `id`: string (PK, UUID, VarChar(36))
 - `name`: string
-- `email`: string (único)
 - `password`: string (hash)
-- `role`: 'ADMIN' | 'USER'
-- `createdAt`: Date
+- `email`: string (único)
+- `role`: Role (enum: USER | ADMIN, default: USER)
+- `isActive`: boolean (default: true)
+- `tasks`: Task[] (relação um-para-muitos)
+- `createdAt`: DateTime (default: now())
+- `updatedAt`: DateTime (auto-updated)
 
-### Tarefa
-- `id`: string (PK)
+### Tarefa (Task)
+- `id`: string (PK, UUID, VarChar(36))
 - `title`: string
 - `description`: string (opcional)
-- `status`: 'PENDING' | 'COMPLETED'
-- `dueDate`: Date (opcional)
-- `userId`: string (FK para User)
-- `isActive`: boolean
-- `createdAt`: Date
-- `updatedAt`: Date
+- `status`: TaskStatus (enum: PENDING | COMPLETED, default: PENDING)
+- `dueDate`: DateTime (opcional)
+- `isActive`: boolean (default: true)
+- `userId`: string (FK para User, VarChar(36))
+- `user`: User (relação muitos-para-um)
+- `createdAt`: DateTime (default: now())
+- `updatedAt`: DateTime (auto-updated)
+
+### Enums
+
+#### Role
+- `USER`
+- `ADMIN`
+
+#### TaskStatus
+- `PENDING`
+- `COMPLETED`
 
 ## Autenticação
 
