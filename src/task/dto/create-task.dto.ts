@@ -5,8 +5,6 @@ export class CreateTaskDto {
 	/** The title of the task, it is required and must be a string
 	 * @description A brief and descriptive title for the task that helps identify its purpose
 	 * @example "Implement user authentication"
-	 * @minLength 3
-	 * @maxLength 100
 	 */
 	@IsNotEmpty({ message: "Title is required" })
 	@IsString({ message: "Title must be a string" })
