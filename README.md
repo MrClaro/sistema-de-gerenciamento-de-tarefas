@@ -32,8 +32,8 @@ Uma API RESTful para gerenciamento de tarefas com autenticação e autorização
 ### 1. Clone o repositório
 
 ```bash
-git clone <url-do-repositório>
-cd to-do-api
+git clone git@github.com:MrClaro/sistema-de-gerenciamento-de-tarefas.git
+cd sistema-de-gerenciamento-de-tarefas
 ```
 
 ### 2. Instale as dependências
@@ -57,8 +57,10 @@ Crie um arquivo `.env` no diretório raiz com as seguintes variáveis(estão no 
 ```env
 DATABASE_URL="sua-url-do-banco-neon"
 JWT_SECRET="seu-segredo-jwt"
-PORT=3000
+PORT="porta-do-servidor"
 ```
+
+Caso você altere a porta, certifique-se de passar a porta correta quando for usar a API, a porta padrão é `3000`.
 
 ### 5. Configuração do banco de dados
 
@@ -129,6 +131,7 @@ src/
 ## Modelos de Dados
 
 ### Usuário (User)
+
 - `id`: string (PK, UUID, VarChar(36))
 - `name`: string
 - `password`: string (hash)
@@ -140,6 +143,7 @@ src/
 - `updatedAt`: DateTime (auto-updated)
 
 ### Tarefa (Task)
+
 - `id`: string (PK, UUID, VarChar(36))
 - `title`: string
 - `description`: string (opcional)
@@ -154,10 +158,12 @@ src/
 ### Enums
 
 #### Role
+
 - `USER`
 - `ADMIN`
 
 #### TaskStatus
+
 - `PENDING`
 - `COMPLETED`
 
