@@ -15,17 +15,22 @@ import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { CurrentUser } from "src/auth/decorator/current-user.decorator";
 import { CurrentUserDto } from "src/auth/dto/current-user.dto";
 import { TaskStatusEnum } from "./enum/task-status.enum";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { UpdateTaskDto } from "./dto/update-task.dto";
 
-@Controller("task")
+@ApiTags("Tasks")
+@Controller("tasks")
 export class TaskController {
 	constructor(private readonly taskService: TaskService) {}
 
+	@ApiBearerAuth("JWT-auth")
 	@Get()
 	@UseGuards(JwtAuthGuard)
 	async findAll(@CurrentUser() user: CurrentUserDto) {
 		return await this.taskService.findAll(user.userId);
 	}
 
+	@ApiBearerAuth("JWT-auth")
 	@Get(":id")
 	@UseGuards(JwtAuthGuard)
 	async findById(
@@ -35,6 +40,7 @@ export class TaskController {
 		return await this.taskService.findById(taskId, user.userId);
 	}
 
+	@ApiBearerAuth("JWT-auth")
 	@Get(":status")
 	@UseGuards(JwtAuthGuard)
 	async findByStatus(
@@ -44,6 +50,7 @@ export class TaskController {
 		return await this.taskService.findByStatus(status, user.userId);
 	}
 
+	@ApiBearerAuth("JWT-auth")
 	@Post()
 	@UseGuards(JwtAuthGuard)
 	async createTask(
@@ -53,11 +60,12 @@ export class TaskController {
 		return await this.taskService.createTask(createTaskDto, user.userId);
 	}
 
+	@ApiBearerAuth("JWT-auth")
 	@Patch(":id")
 	@UseGuards(JwtAuthGuard)
 	async updateTask(
 		@Param("id") taskId: string,
-		@Body() updateTaskDto: CreateTaskDto,
+		@Body() updateTaskDto: UpdateTaskDto,
 		@CurrentUser() user: CurrentUserDto,
 	) {
 		return await this.taskService.updateTask(
@@ -67,6 +75,7 @@ export class TaskController {
 		);
 	}
 
+	@ApiBearerAuth("JWT-auth")
 	@Delete(":id")
 	@UseGuards(JwtAuthGuard)
 	async softDelete(
