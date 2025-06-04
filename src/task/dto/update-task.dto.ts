@@ -1,4 +1,4 @@
-import { IsEnum, IsISO8601, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsOptional, IsString } from "class-validator";
 import { TaskStatusEnum } from "../enum/task-status.enum";
 import { Transform, Type } from "class-transformer";
 

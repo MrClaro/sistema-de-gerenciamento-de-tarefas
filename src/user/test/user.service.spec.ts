@@ -12,7 +12,7 @@ import {
 } from "@nestjs/common";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import * as bcrypt from "bcrypt";
-import { mockPrismaUser, defaultUserId } from "../mock/UserMock";
+import { mockPrismaUser, defaultUserId } from "../mock/user-mock";
 
 jest.mock("bcrypt", () => ({
 	hash: jest.fn(),

@@ -9,7 +9,7 @@ import {
 	mockUserResponse,
 	mockUserArrayResponse,
 	defaultUserId,
-} from "../mock/UserMock";
+} from "../mock/user-mock";
 import { UserService } from "../user.service";
 import { Role } from "../enum/user-role.enum";
 
