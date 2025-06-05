@@ -192,13 +192,14 @@ Authorization: Bearer seu-token-jwt
 
 ## Melhorias Futuras
 
-1. Adicionar testes unitários e de integração
-2. Implementar logs estruturados
-3. Adicionar funcionalidade de recuperação de senha
-4. Adicionar compartilhamento de tarefas entre usuários
-5. Implementar categorias e tags para tarefas
-6. Adicionar níveis de prioridade para tarefas
-7. Implementar lembretes e notificações para tarefas
+1. Adicionar testes unitários ✅ - Implementado
+2. Adicionar testes de integração
+3. Implementar logs estruturados
+4. Adicionar funcionalidade de recuperação de senha
+5. Adicionar compartilhamento de tarefas entre usuários
+6. Implementar categorias e tags para tarefas
+7. Adicionar níveis de prioridade para tarefas
+8. Implementar lembretes e notificações para tarefas
 
 ## Trello do Projeto
 [Aperte aqui para ser redirecionado para o Quadro do Trello](https://trello.com/invite/b/683be60e38be541deee5b7c0/ATTIfbb758874c463718753f12258b07faf7728D9F0F/sistema-de-gerenciamento-de-tarefas-to-do-api)
